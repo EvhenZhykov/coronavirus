@@ -20,13 +20,11 @@ class StatisticRepository
     {
         $statistics = Statistic::get();
 
-        $mapped = $statistics->map(function(&$s) {
+        return $statistics->map(function(&$s) {
+            $s->data        = json_decode($s->data);
             $s->generalData = json_decode($s->generalData);
-            $s->totalData   = json_decode($s->totalData);
             return $s;
         });
-
-        return $mapped;
     }
 
     /**
@@ -37,8 +35,8 @@ class StatisticRepository
     public function getLast(): Statistic
     {
         $statistic = Statistic::get()->first();
+        $statistic->data        = json_decode($statistic->data);
         $statistic->generalData = json_decode($statistic->generalData);
-        $statistic->totalData = json_decode($statistic->totalData);
         return $statistic;
     }
 }

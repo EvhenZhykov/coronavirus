@@ -10,7 +10,7 @@ use DB;
  * Class FillStatisticCommand
  * @package App\Console\Commands
  */
-class FillStatisticCommand extends Command/**/
+class FillStatisticCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -49,8 +49,8 @@ class FillStatisticCommand extends Command/**/
         $html= str_get_html( $load );
 
         $generalData = [
-            'cases' => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 0)->innertext()),
-            'deaths' => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 1)->innertext()),
+            'cases'     => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 0)->innertext()),
+            'deaths'    => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 1)->innertext()),
             'recovered' => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 2)->innertext()),
         ];
 
@@ -61,23 +61,23 @@ class FillStatisticCommand extends Command/**/
 
         foreach ($rows as $index=>$row) {
             $rowHTML = $html->load($row->innertext);
-            $data[$index]['country'] = strip_tags($rowHTML->find('td', 0)->innertext);
-            $data[$index]['totalCases'] = (int)str_replace(",", "", $rowHTML->find('td', 1)->innertext);
-            $data[$index]['newCases'] = (int)str_replace(",", "", $rowHTML->find('td', 2)->innertext);
-            $data[$index]['totalDeaths'] = (int)str_replace(",", "", $rowHTML->find('td', 3)->innertext);
-            $data[$index]['newDeaths'] = (int)str_replace(",", "", $rowHTML->find('td', 4)->innertext);
+            $data[$index]['country']        = strip_tags($rowHTML->find('td', 0)->innertext);
+            $data[$index]['totalCases']     = (int)str_replace(",", "", $rowHTML->find('td', 1)->innertext);
+            $data[$index]['newCases']       = (int)str_replace(",", "", $rowHTML->find('td', 2)->innertext);
+            $data[$index]['totalDeaths']    = (int)str_replace(",", "", $rowHTML->find('td', 3)->innertext);
+            $data[$index]['newDeaths']      = (int)str_replace(",", "", $rowHTML->find('td', 4)->innertext);
             $data[$index]['totalRecovered'] = (int)str_replace(",", "", $rowHTML->find('td', 5)->innertext);
-            $data[$index]['activeCases'] = (int)str_replace(",", "", $rowHTML->find('td', 6)->innertext);
-            $data[$index]['serious'] = (int)str_replace(",", "", $rowHTML->find('td', 7)->innertext);
-            $data[$index]['totCases'] = (int)str_replace(",", "", $rowHTML->find('td', 8)->innertext);
+            $data[$index]['activeCases']    = (int)str_replace(",", "", $rowHTML->find('td', 6)->innertext);
+            $data[$index]['serious']        = (int)str_replace(",", "", $rowHTML->find('td', 7)->innertext);
+            $data[$index]['totCases']       = (int)str_replace(",", "", $rowHTML->find('td', 8)->innertext);
         }
 
         DB::table('statistics')->insert(
             [
                 'generalData' => json_encode($generalData),
-                'totalData' => json_encode($data),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'data'        => json_encode($data),
+                'created_at'  => Carbon::now(),
+                'updated_at'  => Carbon::now(),
             ]
         );
     }
