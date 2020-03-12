@@ -13,8 +13,10 @@ class CreateStatisticTable extends Migration
      */
     public function up()
     {
-        Schema::create('statistic', function (Blueprint $table) {
+        Schema::create('statistics', function (Blueprint $table) {
             $table->id();
+            $table->text('generalData')->nullable();
+            $table->text('totalData')->nullable();
             $table->timestamps();
         });
     }
