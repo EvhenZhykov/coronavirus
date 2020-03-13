@@ -34,7 +34,7 @@ class StatisticRepository
      */
     public function getLast(): Statistic
     {
-        $statistic = Statistic::get()->first();
+        $statistic = Statistic::get()->last();
         $statistic->data        = json_decode($statistic->data);
         $statistic->generalData = json_decode($statistic->generalData);
         return $statistic;
