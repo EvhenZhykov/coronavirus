@@ -57,7 +57,7 @@ class FillStatisticCommand extends Command
         $data = [];
 
         $rows = $html
-            ->find('#main_table_countries tbody tr');
+            ->find('.main_table_countries tbody tr');
 
         foreach ($rows as $index=>$row) {
             $rowHTML = $html->load($row->innertext);
