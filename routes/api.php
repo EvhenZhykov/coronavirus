@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('all-statistic', 'Api\StatisticController@getAll');
 Route::get('last-statistic', 'Api\StatisticController@getLast');
+Route::post('statistic', 'Api\StatisticController@byCountry');

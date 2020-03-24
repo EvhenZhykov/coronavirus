@@ -37,4 +37,17 @@ class StatisticController extends ApiController
 
         return $this->buildResponse(200, ['data' => $statistic]);
     }
+
+    /**
+     * search by country
+     *
+     * @param StatisticRepository $statisticRepository
+     * @return JsonResponse
+     */
+    public function byCountry(StatisticRepository $statisticRepository): JsonResponse
+    {
+        $statistic = $statisticRepository->byCountry();
+
+        return $this->buildResponse(200, ['data' => $statistic]);
+    }
 }

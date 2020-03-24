@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
 class StatisticRepository
 {
     /**
-     * Get all departments
+     * Get all Statistic
      *
      * @return Collection
      */
@@ -28,7 +28,7 @@ class StatisticRepository
     }
 
     /**
-     * Get last departments
+     * Get last Statistic
      *
      * @return Statistic
      */
@@ -38,5 +38,20 @@ class StatisticRepository
         $statistic->data        = json_decode($statistic->data);
         $statistic->generalData = json_decode($statistic->generalData);
         return $statistic;
+    }
+
+    /**
+     * Get last Statistic
+     *
+     */
+    public function byCountry()
+    {
+        $requestData = request()->all();
+        $statistic = Statistic::get()->last();
+        foreach (json_decode($statistic->data) as $data){
+            if($data->country == $requestData['country']){
+                return $data;
+            }
+        }
     }
 }
