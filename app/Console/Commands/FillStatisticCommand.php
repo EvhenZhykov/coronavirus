@@ -75,7 +75,9 @@ class FillStatisticCommand extends Command
             $data[$index]['activeCases']    = (int)str_replace(",", "", $rowHTML->find('td', 6)->innertext);
             $data[$index]['serious']        = (int)str_replace(",", "", $rowHTML->find('td', 7)->innertext);
             $data[$index]['totCases']       = (int)str_replace(",", "", $rowHTML->find('td', 8)->innertext);
-            $data[$index]['population']     = $populationData->data->$name;
+            if(isset($populationData->data->$name)){
+                $data[$index]['population']     = $populationData->data->$name;
+            }
         }
 
         DB::table('statistics')->insert(
