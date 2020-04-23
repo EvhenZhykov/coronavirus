@@ -3,8 +3,9 @@
 /public/storage
 /storage/*.key
 /vendor
+/.idea
 .env
-.env.backup
+.env.bacskup
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml

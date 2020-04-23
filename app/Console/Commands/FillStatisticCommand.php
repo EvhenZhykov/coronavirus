@@ -94,6 +94,7 @@ class FillStatisticCommand extends Command
             [
                 'generalData' => json_encode($generalData),
                 'data'        => json_encode($data),
+                'apiData'     => json_encode($result->features),
                 'created_at'  => Carbon::now(),
                 'updated_at'  => Carbon::now(),
             ]
