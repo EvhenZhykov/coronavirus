@@ -50,8 +50,14 @@ class StatisticRepository
     {
         $requestData = request()->all();
         $statistic = Statistic::get()->last();
+        $requestedCountry = trim(strtolower($requestData['country']));
         foreach (json_decode($statistic->data) as $data){
-            if($data->country == $requestData['country']){
+            if (strtolower($data->country) === 'us' &&
+                $requestedCountry === 'us' || $requestedCountry === 'u.s.a' ||
+                $requestedCountry === 'usa' || $requestedCountry === 'america') {
+                return $data;
+            }
+            if(strtolower($data->country) == $requestedCountry) {
                 return $data;
             }
         }
