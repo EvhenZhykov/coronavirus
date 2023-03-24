@@ -16,7 +16,7 @@ class Cors
     public function handle($request, Closure $next)
     {
         $headers = [
-            'Access-Control-Allow-Origin' => ['https://api-covid.theevenstar.net', 'http://api-covid.theevenstar.net'],
+            'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'POST, PUT, PATCH, GET, DELETE, OPTIONS',
             'Access-Control-Allow-Credentials' => false,
             'Access-Control-Allow-Headers' => 'Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization',
