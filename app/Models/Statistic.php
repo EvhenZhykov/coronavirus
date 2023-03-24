@@ -12,7 +12,10 @@ class Statistic extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'data', 'generalData'
+        'id',
+        'data',
+        'generalData',
+        'apiData',
     ];
 
     /**

@@ -43,47 +43,62 @@ class FillStatisticCommand extends Command
      */
     public function handle()
     {
-        include_once('vendor/simplehtmldom/simplehtmldom/simple_html_dom.php');
-        // Read JSON file
-        $json = file_get_contents('./resources/json/data.json');
+        // данная ссылка может изменятся на ресурсе services9.arcgis.com,
+        // но менять ее можно только вручную и искать в браузере в Network тоже только вручную к сожалению((,
+        // получать активную стабильную ссылку невозможно
+        $url = 'https://services9.arcgis.com/N9p5hsImWXAccRNI/arcgis/rest/services/Nc2JKvYFoAEOFCG5JSI6/FeatureServer/2/query?f=json&cacheHint=true&resultOffset=0&resultRecordCount=225&where=Incident_Rate%3E0&orderByFields=Incident_Rate%20DESC&outFields=*&resultType=standard&returnGeometry=false&spatialRel=esriSpatialRelIntersects';
+        $ch = curl_init($url);
+        // получать заголовки
+        curl_setopt ($ch, CURLOPT_HEADER, 0);
+        // если ведется проверка HTTP User-agent, то передаем один из возможных допустимых вариантов:
+        curl_setopt ($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3');
+        // елси проверятся откуда пришел пользователь, то указываем допустимый заголовок HTTP Referer:
+        curl_setopt ($ch, CURLOPT_REFERER, $url);
+        // использовать метод POST
+        curl_setopt ($ch, CURLOPT_POST, 0);
+        // возвращать результат работы
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        // не проверять SSL сертификат
+        curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // не проверять Host SSL сертификата
+        curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        $result = curl_exec ($ch);
+        // закрыть сессию работы с cURL
+        curl_close ($ch);
+        $result = json_decode($result);
 
-        $load = file_get_contents( 'https://www.worldometers.info/coronavirus/#countries' );
-        $html= str_get_html( $load );
+        $json = file_get_contents('./resources/json/data.json');
         $populationData = json_decode($json);
 
         $generalData = [
-            'cases'      => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 0)->innertext()),
-            'deaths'     => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 1)->innertext()),
-            'recovered'  => (int)str_replace(",", "", $html->find('#maincounter-wrap span', 2)->innertext()),
+            'cases'      => 0,
+            'deaths'     => 0,
+            'recovered'  => 0,
             'population' => $populationData->generalPopulations,
         ];
-
         $data = [];
-
-        $rows = $html
-            ->find('.main_table_countries tbody tr');
-
-        foreach ($rows as $index=>$row) {
-            $rowHTML = $html->load($row->innertext);
-            $name                           = trim(strip_tags($rowHTML->find('td', 0)->innertext));
-            $data[$index]['country']        = $name;
-            $data[$index]['totalCases']     = (int)str_replace(",", "", $rowHTML->find('td', 1)->innertext);
-            $data[$index]['newCases']       = (int)str_replace(",", "", $rowHTML->find('td', 2)->innertext);
-            $data[$index]['totalDeaths']    = (int)str_replace(",", "", $rowHTML->find('td', 3)->innertext);
-            $data[$index]['newDeaths']      = (int)str_replace(",", "", $rowHTML->find('td', 4)->innertext);
-            $data[$index]['totalRecovered'] = (int)str_replace(",", "", $rowHTML->find('td', 5)->innertext);
-            $data[$index]['activeCases']    = (int)str_replace(",", "", $rowHTML->find('td', 6)->innertext);
-            $data[$index]['serious']        = (int)str_replace(",", "", $rowHTML->find('td', 7)->innertext);
-            $data[$index]['totCases']       = (int)str_replace(",", "", $rowHTML->find('td', 8)->innertext);
+        $sortData = [];
+        foreach ($result->features as $index=>$row){
+            $generalData['cases'] += $row->attributes->Confirmed;
+            $generalData['deaths'] += $row->attributes->Deaths;
+            $generalData['recovered'] += $row->attributes->Recovered;
+            $name = $row->attributes->Country_Region;
+            $data[$index]['country'] = $name;
+            $data[$index]['totalCases'] = $row->attributes->Confirmed;
+            $data[$index]['totalDeaths'] = $row->attributes->Deaths;
+            $data[$index]['totalRecovered'] = $row->attributes->Recovered;
             if(isset($populationData->data->$name)){
-                $data[$index]['population']     = $populationData->data->$name;
+                $data[$index]['population'] = $populationData->data->$name;
             }
+            $sortData[] = $row->attributes->Confirmed;
         }
+        array_multisort($sortData, SORT_DESC, $data);
 
         DB::table('statistics')->insert(
             [
                 'generalData' => json_encode($generalData),
                 'data'        => json_encode($data),
+                'apiData'     => json_encode($result->features),
                 'created_at'  => Carbon::now(),
                 'updated_at'  => Carbon::now(),
             ]
