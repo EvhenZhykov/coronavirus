@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*', 'https://covid.theevenstar.net', 'http://covid.theevenstar.net'],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => ['*'],
 
