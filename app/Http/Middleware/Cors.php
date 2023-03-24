@@ -19,7 +19,7 @@ class Cors
             'Access-Control-Allow-Origin' => '*',
             'Access-Control-Allow-Methods' => 'POST, PUT, PATCH, GET, DELETE, OPTIONS',
             'Access-Control-Allow-Credentials' => false,
-            'Access-Control-Allow-Headers' => '*',
+            'Access-Control-Allow-Headers' => 'Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization',
             'Accept' => 'application/json'
         ];
         if ($request->getMethod() == "OPTIONS") {
