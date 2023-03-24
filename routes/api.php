@@ -14,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('all-statistic', 'Api\StatisticController@getAll')->middleware(['cors']);
-Route::get('last-statistic', 'Api\StatisticController@getLast')->middleware(['cors']);
-Route::get('statistic', 'Api\StatisticController@byCountry')->middleware(['cors']);
+Route::get('all-statistic', 'Api\StatisticController@getAll')->middleware('cors');
+Route::get('last-statistic', 'Api\StatisticController@getLast')->middleware('cors');
+Route::get('statistic', 'Api\StatisticController@byCountry')->middleware('cors');
