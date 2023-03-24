@@ -43,13 +43,17 @@ class FillStatisticCommand extends Command
      */
     public function handle()
     {
-        $ch = curl_init('https://services9.arcgis.com/N9p5hsImWXAccRNI/arcgis/rest/services/Nc2JKvYFoAEOFCG5JSI6/FeatureServer/2/query?f=json&where=Recovered%3C%3E0&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc&resultOffset=0&resultRecordCount=250&cacheHint=true');
+        // данная ссылка может изменятся на ресурсе services9.arcgis.com,
+        // но менять ее можно только вручную и искать в браузере в Network тоже только вручную к сожалению((,
+        // получать активную стабильную ссылку невозможно
+        $url = 'https://services9.arcgis.com/N9p5hsImWXAccRNI/arcgis/rest/services/Nc2JKvYFoAEOFCG5JSI6/FeatureServer/2/query?f=json&cacheHint=true&resultOffset=0&resultRecordCount=225&where=Incident_Rate%3E0&orderByFields=Incident_Rate%20DESC&outFields=*&resultType=standard&returnGeometry=false&spatialRel=esriSpatialRelIntersects';
+        $ch = curl_init($url);
         // получать заголовки
         curl_setopt ($ch, CURLOPT_HEADER, 0);
         // если ведется проверка HTTP User-agent, то передаем один из возможных допустимых вариантов:
         curl_setopt ($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3');
         // елси проверятся откуда пришел пользователь, то указываем допустимый заголовок HTTP Referer:
-        curl_setopt ($ch, CURLOPT_REFERER, 'https://services9.arcgis.com/N9p5hsImWXAccRNI/arcgis/rest/services/Nc2JKvYFoAEOFCG5JSI6/FeatureServer/2/query?f=json&where=Recovered%3C%3E0&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc&resultOffset=0&resultRecordCount=250&cacheHint=true');
+        curl_setopt ($ch, CURLOPT_REFERER, $url);
         // использовать метод POST
         curl_setopt ($ch, CURLOPT_POST, 0);
         // возвращать результат работы
